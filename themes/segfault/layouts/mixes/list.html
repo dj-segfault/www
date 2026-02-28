@@ -1,0 +1,24 @@
+{{ define "main" }}
+<section class="list-page mixes-list">
+  <div class="container">
+    <h1 class="page-title">{{ .Title }}</h1>
+    {{ with .Content }}<div class="list-intro">{{ . }}</div>{{ end }}
+    <div class="mix-grid">
+      {{ range .Pages }}
+      <a href="{{ .RelPermalink }}" class="mix-card">
+        <div class="mix-card-header">
+          <span class="mix-genre">{{ .Params.genre }}</span>
+          <span class="mix-duration">{{ .Params.duration }}</span>
+        </div>
+        <h3 class="mix-title">{{ .Title }}</h3>
+        <p class="mix-description">{{ .Description }}</p>
+        <div class="mix-meta">
+          {{ with .Params.bpm }}<span class="mix-bpm">{{ . }} BPM</span>{{ end }}
+          <time>{{ .Date.Format "Jan 2, 2006" }}</time>
+        </div>
+      </a>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}

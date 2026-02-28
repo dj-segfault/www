@@ -1,0 +1,9 @@
+name = "Segfault"
+license = "MIT"
+licenselink = "https://github.com/djsegfault"
+description = "A dark cyberpunk theme for DJ Segfault"
+tags = ["dark", "cyberpunk", "music", "dj"]
+min_version = "0.120.0"
+
+[author]
+  name = "DJ Segfault"
