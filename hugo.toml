@@ -1,4 +1,4 @@
-baseURL = 'https://djsegfault.github.io/'
+baseURL = 'https://djsegfault.com/'
 languageCode = 'en-us'
 title = 'DJ Segfault'
 theme = 'segfault'
