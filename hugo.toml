@@ -12,10 +12,6 @@ theme = 'segfault'
     url = '/'
     weight = 10
   [[menu.main]]
-    name = 'Mixes'
-    url = '/mixes/'
-    weight = 20
-  [[menu.main]]
     name = 'Blog'
     url = '/blog/'
     weight = 30
@@ -26,7 +22,7 @@ theme = 'segfault'
 
 [permalinks]
   blog = '/blog/:slug/'
-  mixes = '/mixes/:slug/'
+
 
 [markup]
   [markup.goldmark]

@@ -6,7 +6,7 @@
     </div>
     <div class="footer-links">
       <a href="https://github.com/djsegfault" class="footer-social" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://soundcloud.com/djsegfault" class="footer-social" target="_blank" rel="noopener">SoundCloud</a>
+
       <a href="https://twitter.com/djsegfault" class="footer-social" target="_blank" rel="noopener">Twitter</a>
     </div>
     <p class="footer-copy">&copy; {{ now.Year }} DJ Segfault. All streams are infinite.</p>
@@ -17,4 +17,100 @@ document.querySelector('.nav-toggle').addEventListener('click', function() {
   document.querySelector('.nav-links').classList.toggle('open');
   this.classList.toggle('open');
 });
+
+(function() {
+  var audio = document.getElementById('stream-audio');
+  var playBtn = document.getElementById('play-btn');
+  var listenBtn = document.getElementById('listen-btn');
+  var playIcon = document.getElementById('play-icon');
+  var pauseIcon = document.getElementById('pause-icon');
+  var volumeSlider = document.getElementById('volume-slider');
+  var status = document.getElementById('stream-status');
+  var waveform = document.getElementById('waveform');
+
+  if (!audio || !playBtn) return;
+
+  var hls = null;
+  var isPlaying = false;
+  var streamUrl = 'https://djsegfault-stream.konda.workers.dev/live.m3u8';
+
+  function initStream() {
+    if (hls) return;
+
+    if (Hls.isSupported()) {
+      hls = new Hls();
+      hls.loadSource(streamUrl);
+      hls.attachMedia(audio);
+      hls.on(Hls.Events.MANIFEST_PARSED, function() {
+        status.textContent = '[ Stream connected ]';
+      });
+      hls.on(Hls.Events.ERROR, function(event, data) {
+        if (data.fatal) {
+          status.textContent = '[ Stream unavailable ]';
+          waveform.classList.remove('playing');
+          showPlay();
+          isPlaying = false;
+          hls.destroy();
+          hls = null;
+        }
+      });
+    } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
+      audio.src = streamUrl;
+      audio.addEventListener('loadedmetadata', function() {
+        status.textContent = '[ Stream connected ]';
+      });
+    }
+  }
+
+  function showPlay() {
+    playIcon.style.display = '';
+    pauseIcon.style.display = 'none';
+  }
+
+  function showPause() {
+    playIcon.style.display = 'none';
+    pauseIcon.style.display = '';
+  }
+
+  function togglePlay() {
+    if (!hls && !audio.src) {
+      initStream();
+    }
+
+    if (isPlaying) {
+      audio.pause();
+      showPlay();
+      waveform.classList.remove('playing');
+      status.textContent = '[ Paused ]';
+      isPlaying = false;
+    } else {
+      audio.play().then(function() {
+        showPause();
+        waveform.classList.add('playing');
+        status.textContent = '[ Now streaming ]';
+        isPlaying = true;
+      }).catch(function() {
+        status.textContent = '[ Stream unavailable ]';
+      });
+    }
+  }
+
+  playBtn.addEventListener('click', togglePlay);
+
+  if (listenBtn) {
+    listenBtn.addEventListener('click', function() {
+      document.getElementById('player').scrollIntoView({ behavior: 'smooth' });
+      setTimeout(function() {
+        if (!isPlaying) togglePlay();
+      }, 600);
+    });
+  }
+
+  if (volumeSlider) {
+    audio.volume = volumeSlider.value;
+    volumeSlider.addEventListener('input', function() {
+      audio.volume = this.value;
+    });
+  }
+})();
 </script>
